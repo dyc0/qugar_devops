@@ -1,0 +1,83 @@
+name: "Install Dependencies"
+description: "Install dependencies for build and test jobs"
+inputs:
+  os:
+    description: "Operating system"
+    required: true
+    default: "ubuntu-latest"
+  pyvista_version:
+    description: "PyVista version to install"
+    required: false
+    default: "0.44.1"
+  deps_prefix:
+    description: "Install prefix for built deps (cached)"
+    required: false
+    default: "${{ github.workspace }}/.deps"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Show runner info
+      shell: bash
+      run: |
+        echo "Running on OS: ${{ runner.os }}"
+        echo "Runner name: ${{ runner.name }}"
+    - name: Install CMake and ninjja, cross-platform
+      uses: lukka/get-cmake@latest
+      # Default caching options are suitable for GH hosted runners
+    - name: Linux Dependencies
+      if: ${{ inputs.os == 'ubuntu-latest' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++
+        sudo apt-get install -y liblapack liblapack-dev liblapacke liblapacke-dev
+        # TODO: LAPACK and LAPACKE can be built from source, that should be the
+        # default behaviour for all OSes and that should provide all the necessary
+        # files.
+    - name: macOS Dependencies
+      if: ${{ inputs.os == 'macos-latest' }}
+      run: |
+        brew update
+        brew install llvm
+        brew install lapack 
+        # TODO: We also need lapacke on macOS
+    - name: Windows Dependencies
+      if: ${{ inputs.os == 'windows-latest' }}
+      run: |
+        choco install -y llvm
+        # TODO: We need to install lapack and lapacke on Windows, but it's not straightforward
+        # We might also need to install BLAS here...
+
+    - name: Catch2 checkout, cross-platform
+      uses: actions/checkout@v4
+      with:
+        repository: "catchorg/Catch2"
+        path: ${{ runner.temp }}/catch2
+    - name: Build and install Catch2, cross-platform
+      shell: bash
+      run: |
+        cmake -B ${{ runner.temp }}/catch2/build -S ${{ runner.temp }}/catch2 -DBUILD_TESTING=OFF
+        cmake --build ${{ runner.temp }}/catch2/build --parallel --target install
+
+    - name: Install Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Install pip dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyvista[trame]==0.44.1
+        pip install nanobind scikit-build-core
+        pip install numpy
+        pip install pytest
+    - name: Install pyvista
+      # pyvtk isn't available on PyPI for arm64, so we install it from a wheel
+      run: |
+        case ${{ runner.architecture }} in arm64) \
+        pip install --no-cache-dir https://github.com/finsberg/vtk-aarch64/releases/download/vtk-9.3.0-cp312/vtk-9.3.0.dev0-cp312-cp312-linux_aarch64.whl ;; \
+        esac; 
+        pip install matplotlib;
+        pip install pyvista[trame]==${{ inputs.pyvista_version }}
+
+      #TODO: FenicsX, it's nontrivial to install
+ 
