@@ -29,39 +29,34 @@ runs:
       if: ${{ inputs.os == 'ubuntu-latest' }}
       run: |
         sudo apt-get update
-        sudo apt-get install -y g++
-        sudo apt-get install -y gfortran # for LAPACK building
-        # TODO: LAPACK and LAPACKE can be built from source, that should be the
-        # default behaviour for all OSes and that should provide all the necessary
-        # files.
+        sudo apt-get install -y g++ gfortran
     - name: macOS Dependencies
       if: ${{ inputs.os == 'macos-latest' }}
       run: |
         brew update
-        brew install llvm
-        brew install lapack 
-        # TODO: We also need lapacke on macOS
+        brew install llvm gfortran
     - name: Windows Dependencies
       if: ${{ inputs.os == 'windows-latest' }}
       run: |
         choco install -y llvm
 
-      # Catch2 is cloned via HTTPs to avoid SSH key issues on GitHub runners
+      # Dependencies are cloned via HTTPs to avoid SSH key issues on GitHub runners
       # Alternatively, we could provide an AUTH token secret to the action
-      # It is then built and installed
-    - name: Catch2 checkout and installation
-      shell: bash
-      run: |
-        git clone --depth 1 https://github.com/catchorg/Catch2.git ${{ runner.temp }}/catch2
-        cmake -B ${{ runner.temp }}/catch2/build -S ${{ runner.temp }}/catch2 -DBUILD_TESTING=OFF
-        cmake --build ${{ runner.temp }}/catch2/build --parallel --target install
+      # They are then built and installed, with caching based on OS and architecture
+    - name: Install Catch2
+      uses: ./.github/actions/clone-cache-install
+      with:
+        dependency_name: "catch2"
+        dependency_repo: "https://github.com/catchorg/Catch2.git"
+        cmake_options: "-DBUILD_TESTING=OFF"
 
-    - name: LAPACK checkout and installation
-      shell: bash
-      run: |
-        git clone --depth 1 https://github.com/Reference-LAPACK/lapack.git ${{ runner.temp }}/lapack
-        cmake -B ${{ runner.temp }}/lapack/build -S ${{ runner.temp }}/lapack -DBUILD_SHARED_LIBS=ON -DLAPACKE=ON
-        cmake --build ${{ runner.temp }}/lapack/build --parallel --target install
+    - name: Install LAPACK
+      uses: ./.github/actions/clone-cache-install
+      with:
+        dependency_name: "lapack"
+        dependency_repo: "https://github.com/Reference-LAPACK/lapack.git"
+        cmake_options: "-DBUILD_SHARED_LIBS=ON -DLAPACKE=ON"
+
 
     # - name: Install Python
     #   uses: actions/setup-python@v4
