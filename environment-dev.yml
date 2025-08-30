@@ -22,3 +22,4 @@ dependencies:
   - pip
   - pip:
     - sphinx-rtd-dark-mode
+    - build

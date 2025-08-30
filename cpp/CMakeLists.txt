@@ -1,3 +1,25 @@
+include(${qugar_CMAKE_DIR}/ProjectOptions.cmake)
+include(${qugar_CMAKE_DIR}/Install.cmake)
+
+# Only set the cxx_standard if it is not set by someone else
+if(NOT DEFINED CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 20)
+endif()
+
+# strongly encouraged to enable this globally to avoid conflicts between
+# -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
+# when compiling with PCH enabled
+set(CMAKE_CXX_EXTENSIONS ON)
+
+qugar_setup_config_options()
+qugar_setup_options()
+
+qugar_global_options()
+qugar_local_options()
+
+# don't know if this should be set globally from here or not...
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+
 # Adding sources
 add_subdirectory(qugar)
 

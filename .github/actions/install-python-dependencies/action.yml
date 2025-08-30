@@ -1,0 +1,46 @@
+name: "Install Python Dependencies"
+description: "Install Python dependencies for build and test jobs"
+inputs:
+  os:
+    description: "Operating system"
+    required: true
+    default: "ubuntu-latest"
+  pyvista_version:
+    description: "PyVista version to install"
+    required: false
+    default: "0.44.1"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Show runner info
+      shell: bash
+      run: |
+        echo "Running on OS: ${{ runner.os }}"
+        echo "Runner name: ${{ runner.name }}"
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        # TODO: Do we want to pin a specific version?
+        python-version: '3.x'
+        cache: 'pip'
+        cache-dependency-path: .github/actions/install-python-dependencies/cicd_requirements.txt
+
+    # NOTE:
+    # Caching conda packages does not seem to be possible at the moment due to
+    # the need to use use-only-tar-bz2 for setup-miniconda, which clashes with
+    # the fenicsx packages. Caching is turned off for now.
+    # - name: Cache conda packages
+    #   uses: actions/cache@v4
+    #   with:
+    #     path: ~/conda_pkgs_dir
+    #     key: ${{ runner.os }}-${{ runner.arch }}-conda-fenicsx
+
+    - name: Install conda for FenicsX
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: QUGaR
+        environment-file: environment-dev.yml
+        auto-activate-base: false
+        # use-only-tar-bz2: true # This is needed for caching to work properly, but clashes with fenicsx packages

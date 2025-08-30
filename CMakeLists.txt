@@ -19,11 +19,12 @@ project(
   HOMEPAGE_URL "https://github.com/pantolin/qugar"
   )
 
-include(cmake/GitConfig.cmake)
-include(cmake/PreventInSourceBuilds.cmake)
-include(cmake/ProjectOptions.cmake)
-include(cmake/Dependencies.cmake)
-include(cmake/Install.cmake)
+option(BUILD_CPP "Build the C++ library" ON)
+if(DEFINED SKBUILD)
+  # If SKBUILD is defined, we are building with scikit-build
+  # and we do not want to build the C++ library
+  set(BUILD_CPP OFF)
+endif()
 
 option(BUILD_PYTHON "Build the Python bindings" OFF)
 if(DEFINED SKBUILD)
@@ -41,35 +42,16 @@ set(qugar_DOC_DIR ${qugar_SOURCE_DIR}/doc)
 
 set(qugar_CMAKE_DIR ${PROJECT_SOURCE_DIR}/cmake)
 
+include(cmake/GitConfig.cmake)
+include(cmake/PreventInSourceBuilds.cmake)
+include(cmake/Dependencies.cmake)
+
 git_config()
-
-# This template attempts to be "fetch_content"-able
-# so that it works well with tools like CPM or other
-# manual dependency management
-
-# Only set the cxx_standard if it is not set by someone else
-if(NOT DEFINED CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 20)
-endif()
-
-# strongly encouraged to enable this globally to avoid conflicts between
-# -Wpedantic being enabled and -std=c++20 and -std=gnu++20 for example
-# when compiling with PCH enabled
-set(CMAKE_CXX_EXTENSIONS ON)
-
-qugar_setup_config_options()
-qugar_setup_options()
-
-qugar_global_options()
 qugar_setup_dependencies()
 
-qugar_local_options()
-
-# don't know if this should be set globally from here or not...
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-
-# Build the library
-add_subdirectory(cpp)
+if(BUILD_CPP)
+  add_subdirectory(cpp)
+endif()
 
 if(BUILD_PYTHON)
   add_subdirectory(python)

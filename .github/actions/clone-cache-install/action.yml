@@ -57,18 +57,14 @@ runs:
       run: |
         set -e
         PREFIX="${{ steps.vars.outputs.prefix }}"
-
         # Binaries (and DLLs on Windows) on PATH
         echo "$PREFIX/bin" >> "$GITHUB_PATH"
-
         # CMake discovery (semicolon list is portable)
         echo "CMAKE_PREFIX_PATH=$PREFIX${CMAKE_PREFIX_PATH:+;${CMAKE_PREFIX_PATH}}" >> "$GITHUB_ENV"
-
         # pkg-config: usually only on Linux/macOS (skip on Windows unless you know you need it)
         if [ "${{ runner.os }}" = "Linux" ] || [ "${{ runner.os }}" = "macOS" ]; then
           echo "PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}" >> "$GITHUB_ENV"
         fi
-
         # Runtime loader for shared libs
         if [ "${{ runner.os }}" = "Linux" ]; then
           echo "LD_LIBRARY_PATH=$PREFIX/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" >> "$GITHUB_ENV"

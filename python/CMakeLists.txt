@@ -47,9 +47,24 @@ nanobind_add_module(
 # TODO: This DOES NOT set the standard, rather just defines a flag -Dcxx_std_20?
 target_compile_definitions(cpp PRIVATE cxx_std_20) 
 
-# Add QUGAR libraries. It's built within this project, so we can link it directly.
+# Add QUGAR libraries. 
 # target_link_libraries(cpp PRIVATE qugar::qugar qugar::qugar_options qugar::qugar_warnings qugar::algoim algoim::algoim)
-target_link_libraries(cpp PRIVATE qugar algoim::algoim ${LAPACKE_LIBRARIES})
+if(BUILD_CPP)
+  # If we are building the C++ library, add it as a submodule
+  message(STATUS "Linking against local build of qugar")
+  target_link_libraries(cpp PRIVATE qugar algoim::algoim ${LAPACKE_LIBRARIES})
+else()
+  # If we are not building the C++ library, we assume it is installed
+  message(STATUS "Linking against installed qugar")
+  if (DEFINED qugar_DIR)
+    list(APPEND CMAKE_PREFIX_PATH "${qugar_DIR}")
+  endif()
+  find_package(qugar CONFIG REQUIRED)
+  if(qugar_FOUND)
+    message(STATUS "Found qugar at ${qugar_DIR}")
+  endif()
+  target_link_libraries(cpp PRIVATE qugar::qugar algoim::algoim ${LAPACKE_LIBRARIES})
+endif()
 
 target_include_directories(cpp SYSTEM PRIVATE
   ${Python_INCLUDE_DIRS}

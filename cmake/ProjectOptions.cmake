@@ -1,4 +1,4 @@
-include(cmake/SystemLink.cmake)
+  include(${qugar_CMAKE_DIR}/SystemLink.cmake)
 include(CMakeDependentOption)
 include(CheckCXXCompilerFlag)
 
@@ -96,7 +96,7 @@ macro(qugar_global_options)
   qugar_supports_sanitizers()
 
   if(qugar_ENABLE_HARDENING AND qugar_ENABLE_GLOBAL_HARDENING)
-    include(cmake/Hardening.cmake)
+    include(${qugar_CMAKE_DIR}/Hardening.cmake)
 
     if(NOT SUPPORTS_UBSAN
       OR qugar_ENABLE_SANITIZER_UNDEFINED
@@ -119,7 +119,7 @@ endmacro()
 
 macro(qugar_local_options)
   if(PROJECT_IS_TOP_LEVEL)
-    include(cmake/StandardProjectSettings.cmake)
+    include(${qugar_CMAKE_DIR}/StandardProjectSettings.cmake)
   endif()
 
   add_library(qugar_warnings INTERFACE)
@@ -133,7 +133,7 @@ macro(qugar_local_options)
   # add_library(qugar::qugar_options INTERFACE IMPORTED)
   # add_library(qugar::qugar_warnings INTERFACE IMPORTED)
 
-  include(cmake/CompilerWarnings.cmake)
+  include(${qugar_CMAKE_DIR}/CompilerWarnings.cmake)
   qugar_set_project_warnings(
     qugar_warnings
     ${qugar_WARNINGS_AS_ERRORS}
@@ -147,7 +147,7 @@ macro(qugar_local_options)
     qugar_configure_linker(qugar_options)
   endif()
 
-  include(cmake/Sanitizers.cmake)
+  include(${qugar_CMAKE_DIR}/Sanitizers.cmake)
   qugar_enable_sanitizers(
     qugar_options
     ${qugar_ENABLE_SANITIZER_ADDRESS}
@@ -172,7 +172,7 @@ macro(qugar_local_options)
     qugar_enable_cache()
   endif()
 
-  include(cmake/StaticAnalyzers.cmake)
+  include(${qugar_CMAKE_DIR}/StaticAnalyzers.cmake)
 
   if(qugar_ENABLE_CLANG_TIDY)
     qugar_enable_clang_tidy(qugar_options ${qugar_WARNINGS_AS_ERRORS})
