@@ -6,7 +6,7 @@ QUGaR documentation
 QUGaR is a library for generating quadrature points for unfitted domain methods.
 It can be used together with the `FEniCS Project <https://fenicsproject.org/>`_
 of isolated.
-It is developed on `GitHub <https://github.com/pantolin/qugar>`_.
+It is developed on `GitHub <https://github.com/dyc0/qugar_devops>`_.
 
 .. toctree::
    :maxdepth: 2

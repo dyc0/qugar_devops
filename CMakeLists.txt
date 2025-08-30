@@ -16,7 +16,7 @@ project(
   qugar 
   VERSION ${qugar_VERSION}
   DESCRIPTION ""
-  HOMEPAGE_URL "https://github.com/pantolin/qugar"
+  HOMEPAGE_URL "https://github.com/dyc0/qugar_devops"
   )
 
 include(cmake/GitConfig.cmake)

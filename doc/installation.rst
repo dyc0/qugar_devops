@@ -86,12 +86,12 @@ Building and installing
 
 First clone the repository and go inside::
 
-    git clone https://github.com/pantolin/qugar.git
-    cd qugar
+    git clone https://github.com/dyc0/qugar_devops.git
+    cd qugar_devops
 
 C++ core
 ********
-To build and install the C++ library, from the ``qugar/`` root directory run::
+To build and install the C++ library, from the ``qugar_devops/`` root directory run::
 
     cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -B build -S cpp/
     cmake --build build --parallel 4
@@ -118,7 +118,7 @@ Python
 
 QUGaR's Python interface requires the C++ library. So before installing the Python interface, make sure you have the C++ library installed.
 
-To build and install the Python interface, under the ``qugar/`` root directory run::
+To build and install the Python interface, under the ``qugar_devops/`` root directory run::
 
     python3 -m pip -v install -r ./python/build-requirements.txt
     python3 -m pip -v install --no-build-isolation ./python -U
@@ -149,13 +149,13 @@ The documentation will be generated in the ``pages/`` directory.
 
 Note that Doxygen must be installed in your system to build the documentation.
 
-Documentation for the `main` branch can be found `here <https://pantolin.github.io/qugar/main/index.html>`_.
+Documentation for the `main` branch can be found `here <https://dyc0.github.io/qugar_devops/main/index.html>`_.
 
 Docker
 ------
 
 It is also possible to use QUGaR from a Docker container.
-The docker file may be built and run from the ``qugar/`` root directory as::
+The docker file may be built and run from the ``qugar_devops/`` root directory as::
 
     docker build -f docker/Dockerfile -t qugar .
     docker run -it -v $(pwd):/root/shared -w /root/shared qugar bash -i
