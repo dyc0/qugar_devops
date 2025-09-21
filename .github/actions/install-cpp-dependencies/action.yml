@@ -4,7 +4,7 @@ inputs:
   os:
     description: "Operating system"
     required: true
-    default: "ubuntu-latest"
+    type: string
   deps_prefix:
     description: "Install prefix for built deps (cached)"
     required: false

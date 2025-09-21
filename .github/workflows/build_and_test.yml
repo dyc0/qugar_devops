@@ -20,6 +20,8 @@ jobs:
 
       - name: Install C++ dependencies
         uses: ./.github/actions/install-cpp-dependencies
+        with:
+          os: ${{ inputs.os }}
 
       - name: Configure, build and install C++ library
         shell: bash
