@@ -1,5 +1,9 @@
 name: "Install Python Dependencies"
 description: "Install Python dependencies for build and test jobs"
+# The idea is to provide caching mechanism for conda packages to speed up
+# the workflows. However, there is currently no way to safely cache conda
+# environments on GH runners. Leaving this as a simple action for now, in
+# the hope that caching will be possible in the future.
 inputs:
   os:
     description: "Operating system"
@@ -18,14 +22,6 @@ runs:
       run: |
         echo "Running on OS: ${{ runner.os }}"
         echo "Runner name: ${{ runner.name }}"
-
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        # TODO: Do we want to pin a specific version?
-        python-version: '3.x'
-        cache: 'pip'
-        cache-dependency-path: .github/actions/install-python-dependencies/cicd_requirements.txt
 
     # NOTE:
     # Caching conda packages does not seem to be possible at the moment due to

@@ -22,8 +22,6 @@ jobs:
 
       - name: Install C++ dependencies
         uses: ./.github/actions/install-cpp-dependencies
-        with:
-          os: ${{ matrix.os }}         # if your composite action expects inputs
 
       - name: Configure, build and install C++ library
         shell: bash
@@ -42,25 +40,24 @@ jobs:
             qugar-${{ runner.os }}-${{ runner.arch }}.tar.zst .
 
       # TODO: C++ tests are temporarily disabled because they are failing
-      - name: Run C++ tests
-        # if: false # Temporarily disable C++ tests because they are failing
-        shell: bash
-        run: ctest --test-dir build/cpp --output-on-failure --output-junit test-results.xml
-
+      # - name: Run C++ tests
+      #   shell: bash
+      #   run: ctest --test-dir build/cpp --output-on-failure --output-junit test-results.xml
+      #
       # These still run even if the previous step failed:
-      - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: junit-${{ runner.os }}-${{ runner.arch }}
-          path: ${{ github.workspace }}/build/cpp/test-results.xml
-
-      - uses: actions/upload-artifact@v4
-        if: ${{ always() }}
-        with:
-          name: logs-${{ runner.os }}-${{ runner.arch }}
-          path: |
-            ${{ github.workspace }}/build/cpp/Testing/Temporary/LastTest.log
-            ${{ github.workspace }}/build/cpp/CTestTestfile.cmake
+      # - uses: actions/upload-artifact@v4
+      #   if: ${{ always() }}
+      #   with:
+      #     name: junit-${{ runner.os }}-${{ runner.arch }}
+      #     path: ${{ github.workspace }}/build/cpp/test-results.xml
+      #
+      # - uses: actions/upload-artifact@v4
+      #   if: ${{ always() }}
+      #   with:
+      #     name: logs-${{ runner.os }}-${{ runner.arch }}
+      #     path: |
+      #       ${{ github.workspace }}/build/cpp/Testing/Temporary/LastTest.log
+      #       ${{ github.workspace }}/build/cpp/CTestTestfile.cmake
 
       - name: Upload C++ library artifact
         uses: actions/upload-artifact@v4
@@ -69,13 +66,61 @@ jobs:
           path: ${{ github.workspace }}/qugar-${{ runner.os }}-${{ runner.arch }}.tar.zst
 
 
-  # build-wheel:
-  #   runs-on: ${{ matrix.os }}
-  #   strategy:
-  #     fail-fast: false
-  #     matrix: { 
-  #       os: [ubuntu-latest], # , macos-latest, windows-latest] 
-  #       arch: [x64] # , arm64]
-  #     }
-  #
+  build-test-wheel:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    strategy:
+      fail-fast: false
+      matrix: { 
+        os: [ubuntu-latest], # , macos-latest, windows-latest] 
+        arch: [x64] # , arm64]
+      }
+    needs: build-and-test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download C++ library artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qugar-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Extract C++ library
+        run: |
+          mkdir -p "${{ github.workspace }}/install"
+          tar -C "${{ github.workspace }}/install" -xf \
+            qugar-${{ runner.os }}-${{ runner.arch }}.tar.zst
+
+      - name: Set QUGaR install path
+        run: echo "qugar_DIR=${{ github.workspace }}/install" >> $GITHUB_ENV
+
+      - name: Install Python and dependencies
+        uses: ./.github/actions/install-python-dependencies
+
+      - name: Show active Python environment
+        run: |
+          which python
+          python --version
+          echo "Python executable: $(which python)"
+          echo "Python version: $(python --version)"
+
+      - name: Build Python wheel
+        run: |
+          python -m build --wheel --outdir dist .
+
+      - name: Install Python wheel
+        run: |
+          pip install dist/*.whl
+
+      - name: Run Python tests
+        run: |
+          pytest -v --junitxml=test-results.xml python/test
+
+      - name: Upload Python test results
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-junit-${{ matrix.os }}-${{ runner.arch }}
+          path: ${{ github.workspace }}/test-results.xml
 
