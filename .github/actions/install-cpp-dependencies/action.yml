@@ -35,11 +35,7 @@ runs:
         brew update
         brew install gcc
         # We need to add Fortran compiler to the environment:
-        GFORTRAN_BIN=$(ls "$(brew --prefix)"/bin/gfortran-*)
-        GFORTRAN_BIN=$(ls "$(brew --prefix)"/bin/gfortran-*)
-        ln -sf "$GFORTRAN_BIN" "$(brew --prefix)"/bin/gfortran
         which gfortran
-        gfortran --version
     - name: Windows dependencies (winget)
       if: runner.os == 'Windows'
       shell: pwsh
