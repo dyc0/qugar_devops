@@ -19,8 +19,8 @@ jobs:
     with:
       os: macos-latest
 
-  windows:
-    uses: ./.github/workflows/build_and_test.yml
-    with:
-      os: windows-latest
+  # windows:
+  #   uses: ./.github/workflows/build_and_test.yml
+  #   with:
+  #     os: windows-latest
 

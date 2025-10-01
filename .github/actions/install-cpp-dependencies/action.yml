@@ -33,6 +33,11 @@ runs:
       run: |
         brew update
         brew install gcc
+        # We need to add Fortran compiler to the environment:
+        GFORTRAN_BIN=$(ls "$(brew --prefix)"/bin/gfortran-*)
+        echo "FC=$GFORTRAN_BIN" >> "$GITHUB_ENV"
+        echo "F77=$GFORTRAN_BIN" >> "$GITHUB_ENV"
+        echo "CMAKE_Fortran_COMPILER=$GFORTRAN_BIN" >> "$GITHUB_ENV"
     - name: Windows dependencies (winget)
       if: runner.os == 'Windows'
       shell: pwsh
