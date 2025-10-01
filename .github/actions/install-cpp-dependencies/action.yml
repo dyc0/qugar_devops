@@ -19,6 +19,7 @@ runs:
         echo "Running on OS: ${{ runner.os }}"
         echo "Runner name: ${{ runner.name }}"
     - name: Install CMake and ninja, cross-platform
+      if: runner.os != 'MacOS'  # macOS uses brew for this, as it's bundled with Fortran
       uses: lukka/get-cmake@latest
       # Default caching options are suitable for GH hosted runners
     - name: Linux Dependencies
