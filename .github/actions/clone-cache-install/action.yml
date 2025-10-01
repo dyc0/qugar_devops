@@ -38,14 +38,6 @@ runs:
         path: ${{ steps.vars.outputs.prefix }}
         key: cached-${{ inputs.dependency_name }}-${{ runner.os }}-${{ runner.arch }}
 
-    - name: Limit parallelism on macOS
-      # MacOS has some kind of dumb per-user process limit, which we hit if we
-      # try to build LAPACKE with --parallel flag. This cap will slow things
-      # down, but we avoid hitting the numproc ceiling.
-      if: runner.os == 'macOS'
-      shell: bash
-      run: echo "CMAKE_BUILD_PARALLEL_LEVEL=2" >> "$GITHUB_ENV"
-
     - name: If no installed dependency in cache, clone, build and install it
       # NOTE: These steps can be separated and cached individually if needed
       if: steps.cache-deps.outputs.cache-hit != 'true'
@@ -56,7 +48,7 @@ runs:
               -S "${{ steps.vars.outputs.clone }}" \
               -DCMAKE_INSTALL_PREFIX="${{ steps.vars.outputs.prefix }}" \
               ${{ inputs.cmake_options }}
-        cmake --build "${{ steps.vars.outputs.build }}" --parallel
+        cmake --build "${{ steps.vars.outputs.build }}" 
         cmake --install "${{ steps.vars.outputs.build }}"
 
     - name: Expose installed prefix to the job
