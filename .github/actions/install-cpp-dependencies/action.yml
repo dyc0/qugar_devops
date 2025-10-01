@@ -22,20 +22,21 @@ runs:
       if: runner.os != 'MacOS'  # macOS uses brew for this, as it's bundled with Fortran
       uses: lukka/get-cmake@latest
       # Default caching options are suitable for GH hosted runners
+
     - name: Linux Dependencies
       if: runner.os == 'Linux'
       shell: bash
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ gfortran
+
     - name: macOS Dependencies
       if: runner.os == 'macOS'
       shell: bash
       run: |
         brew update
         brew install gcc
-        # We need to add Fortran compiler to the environment:
-        which gfortran
+
     - name: Windows dependencies (winget)
       if: runner.os == 'Windows'
       shell: pwsh

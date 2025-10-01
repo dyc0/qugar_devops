@@ -48,7 +48,12 @@ runs:
               -S "${{ steps.vars.outputs.clone }}" \
               -DCMAKE_INSTALL_PREFIX="${{ steps.vars.outputs.prefix }}" \
               ${{ inputs.cmake_options }}
-        cmake --build "${{ steps.vars.outputs.build }}" 
+        if [[ "$RUNNER_OS" == "macOS" ]]; then
+          # Macos runners have problem with nproc limit
+          cmake --build "${{ steps.vars.outputs.build }}"
+        else
+          cmake --build "${{ steps.vars.outputs.build }}" --parallel
+        fi
         cmake --install "${{ steps.vars.outputs.build }}"
 
     - name: Expose installed prefix to the job
