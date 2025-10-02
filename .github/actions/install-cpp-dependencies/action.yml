@@ -67,6 +67,7 @@ runs:
         cmake_options: "-DBUILD_TESTING=OFF"
 
     - name: Install LAPACK
+      if: runner.os != 'MacOS'  # LAPACK is bundled with accelerate on macOS
       uses: ./.github/actions/clone-cache-install
       with:
         dependency_name: "lapack"
