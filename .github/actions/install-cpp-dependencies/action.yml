@@ -41,12 +41,14 @@ runs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        winget --version
-        winget source update
-        winget install -e --id LLVM.LLVM `
-          --accept-package-agreements --accept-source-agreements --disable-interactivity
-        # Make LLVM immediately available to later steps
-        echo 'C:\Program Files\LLVM\bin' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        choco install mingw --no-progress -y
+        choco install cmake --no-progress -y --installargs "ADD_CMAKE_TO_PATH=System"
+        choco install ninja --no-progress -y
+        echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
+        g++ --version
+        gfortran --version
+        cmake --version
+        ninja --version
     - name: Windows gfortran (MSYS2)
       if: runner.os == 'Windows'
       shell: pwsh
