@@ -10,6 +10,7 @@ inputs:
   cmake_options:
     description: "Additional CMake options for building the dependency"
     required: false
+    default: ""
 
 runs:
   using: "composite"
@@ -46,14 +47,11 @@ runs:
         git clone --depth 1 "${{ inputs.dependency_repo }}" "${{ steps.vars.outputs.clone }}"
         cmake -B "${{ steps.vars.outputs.build }}" \
               -S "${{ steps.vars.outputs.clone }}" \
+              -G "Ninja" \
+              -DCMAKE_BUILD_TYPE=Release \
               -DCMAKE_INSTALL_PREFIX="${{ steps.vars.outputs.prefix }}" \
               ${{ inputs.cmake_options }}
-        if [[ "$RUNNER_OS" == "macOS" ]]; then
-          # Macos runners have problem with nproc limit
-          cmake --build "${{ steps.vars.outputs.build }}"
-        else
-          cmake --build "${{ steps.vars.outputs.build }}" --parallel
-        fi
+        cmake --build "${{ steps.vars.outputs.build }}" --parallel
         cmake --install "${{ steps.vars.outputs.build }}"
 
     - name: Expose installed prefix to the job
