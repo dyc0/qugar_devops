@@ -62,6 +62,9 @@ runs:
         PREFIX="${{ steps.vars.outputs.prefix }}"
         # Binaries (and DLLs on Windows) on PATH
         echo "$PREFIX/bin" >> "$GITHUB_PATH"
+        if "${{ runner.os }}" = "Windows" ]; then
+          echo "$PREFIX/lib" >> "$GITHUB_PATH"
+        fi
         # CMake discovery (semicolon list is portable)
         echo "CMAKE_PREFIX_PATH=$PREFIX${CMAKE_PREFIX_PATH:+;${CMAKE_PREFIX_PATH}}" >> "$GITHUB_ENV"
         # pkg-config: usually only on Linux/macOS (skip on Windows unless you know you need it)
