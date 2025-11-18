@@ -26,6 +26,10 @@ runs:
         prefix="${{ github.workspace }}/.deps/${{ inputs.dependency_name }}-${{ runner.os }}-${{ runner.arch }}"
         clone="${{ runner.temp }}/${{ inputs.dependency_name }}"
         build="$clone/build"
+        echo "Setting up variables for ${{ inputs.dependency_name }}"
+        echo "$prefix"
+        echo "$clone"
+        echo "$build"
         {
           echo "prefix=$prefix"
           echo "clone=$clone"
@@ -62,7 +66,7 @@ runs:
         PREFIX="${{ steps.vars.outputs.prefix }}"
         # Binaries (and DLLs on Windows) on PATH
         echo "$PREFIX/bin" >> "$GITHUB_PATH"
-        if "${{ runner.os }}" = "Windows" ]; then
+        if [ "${{ runner.os }}" = "Windows" ]; then
           echo "$PREFIX/lib" >> "$GITHUB_PATH"
         fi
         # CMake discovery (semicolon list is portable)
