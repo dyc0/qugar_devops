@@ -18,8 +18,9 @@ runs:
       run: |
         echo "Running on OS: ${{ runner.os }}"
         echo "Runner name: ${{ runner.name }}"
-    - name: Install CMake and ninja, cross-platform
-      if: runner.os != 'MacOS'  # macOS uses brew for this, as it's bundled with Fortran
+
+    - name: Install CMake and ninja, Linux
+      if: runner.os == 'Linux'
       uses: lukka/get-cmake@latest
       # Default caching options are suitable for GH hosted runners
 
@@ -43,7 +44,6 @@ runs:
       run: |
         choco install mingw ninja --no-progress -y
         choco install cmake --no-progress -y --installargs "ADD_CMAKE_TO_PATH=System"
-        echo "C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin" >> $env:GITHUB_PATH
 
       # Dependencies are cloned via HTTPs to avoid SSH key issues on GitHub runners
       # Alternatively, we could provide an AUTH token secret to the action
