@@ -48,6 +48,7 @@ runs:
       if: steps.cache-deps.outputs.cache-hit != 'true'
       shell: bash
       run: |
+        which g++ 
         git clone --depth 1 "${{ inputs.dependency_repo }}" "${{ steps.vars.outputs.clone }}"
         cmake -B "${{ steps.vars.outputs.build }}" \
               -S "${{ steps.vars.outputs.clone }}" \

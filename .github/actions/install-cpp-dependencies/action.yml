@@ -38,16 +38,13 @@ runs:
         brew update
         brew install gcc
 
-    - name: Set up MSYS2 (Windows)
+    - name: Windows dependencies (chocolatey)
       if: runner.os == 'Windows'
-      uses: msys2/setup-msys2@v2
-      with:
-        update: true
-        install: >-
-          mingw-w64-x86_64-gcc
-          mingw-w64-x86_64-gfortran
-          mingw-w64-x86_64-cmake
-          mingw-w64-x86_64-ninja
+      shell: pwsh
+      run: |
+        choco install mingw ninja --no-progress -y
+        choco install cmake --no-progress -y --installargs "ADD_CMAKE_TO_PATH=System"
+
 
       # Dependencies are cloned via HTTPs to avoid SSH key issues on GitHub runners
       # Alternatively, we could provide an AUTH token secret to the action
