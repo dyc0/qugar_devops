@@ -35,7 +35,6 @@ jobs:
       - name: Configure, build and install C++ library
         shell: bash
         run: |
-          which g++
           cmake -S . -B build \
                 -G Ninja \
                 -DBUILD_TESTING=ON \

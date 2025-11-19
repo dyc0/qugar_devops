@@ -40,12 +40,11 @@ runs:
 
     - name: Windows dependencies (chocolatey)
       if: runner.os == 'Windows'
-      shell: pwsh
+      shell: bash
       run: |
-        which g++
-        choco install mingw ninja --no-progress -y
+        choco install ninja --no-progress -y
         choco install cmake --no-progress -y --installargs "ADD_CMAKE_TO_PATH=System"
-
+        echo "C:\mingw64\bin" >> $env:GITHUB_PATH
 
       # Dependencies are cloned via HTTPs to avoid SSH key issues on GitHub runners
       # Alternatively, we could provide an AUTH token secret to the action
