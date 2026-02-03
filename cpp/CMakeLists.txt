@@ -56,6 +56,8 @@ qugar_setup_config_options()
 qugar_setup_options()
 
 qugar_global_options()
+qugar_setup_dependencies()
+
 qugar_local_options()
 
 # don't know if this should be set globally from here or not...
@@ -64,7 +66,6 @@ set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 # Adding sources
 add_subdirectory(qugar)
 
-# TODO: Check if this will work with top-level CMakeLists
 # Don't even look at tests if we're not top level
 if(NOT PROJECT_IS_TOP_LEVEL)
   return()
@@ -91,7 +92,7 @@ if(qugar_BUILD_DOC)
   add_subdirectory(doc)
 endif()
 
-# set the startup project for the "play" button in MSVC
+# # set the startup project for the "play" button in MSVC
 # set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT demo_reparam_gygroid)
 if(qugar_WITH_DEMOS)
   add_subdirectory(demo)

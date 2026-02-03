@@ -1,11 +1,19 @@
-include(${qugar_CMAKE_DIR}/CPM.cmake)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/modules")
+include(../cmake/CPM.cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../cmake/modules")
 
 macro(qugar_setup_dependencies)
 
   if(NOT TARGET algoim::algoim)
-    CPMAddPackage("gh:pantolin/algoim@1.0.3")
-    if(NOT TARGET algoim::algoim)
+    if(DEFINED algoim_SOURCE_DIR)
+      # Use local version
+      add_library(algoim::algoim INTERFACE IMPORTED)
+      target_include_directories(algoim::algoim INTERFACE "${algoim_SOURCE_DIR}")
+      message(STATUS "Using local algoim from ${algoim_SOURCE_DIR}")
+    else()
+      # Fetch from GitHub
+      # CPMAddPackage("gh:pantolin/algoim@1.0.3")
+      # TODO: Switch to the fork until the multiple-definition issue fix is merged
+      CPMAddPackage("gh:dyc0/algoim@1.0.0")
       if(TARGET algoim)
         add_library(algoim::algoim ALIAS algoim)
       elseif(DEFINED algoim_SOURCE_DIR)
@@ -21,7 +29,7 @@ macro(qugar_setup_dependencies)
   # included in algoim, but we prefer to use LAPACK if
   # available.
 
-  include(${qugar_CMAKE_DIR}/lapacke.cmake)
+  include(../cmake/lapacke.cmake)
   qugar_find_lapacke()
 
   if(qugar_BUILD_DOC)
@@ -30,7 +38,7 @@ macro(qugar_setup_dependencies)
 
 
   if(BUILD_TESTING)
-    include(${qugar_CMAKE_DIR}/Catch2.cmake)
+    include(../cmake/Catch2.cmake)
     qugar_find_Catch2()
   endif()
 endmacro()
