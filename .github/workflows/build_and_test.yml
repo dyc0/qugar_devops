@@ -23,14 +23,14 @@ jobs:
         with:
           os: ${{ inputs.os }}
 
-      - name: Check PATH before tests
-        shell: bash
-        run: |
-          echo "=== Current PATH ==="
-          echo "$PATH" | tr ':' '\n' | grep -i "qugar\|lapack\|deps" || echo "No project paths found in PATH"
-
-          echo "=== Full PATH breakdown ==="
-          echo "$PATH" | tr ':' '\n' | nl -v1
+      # - name: Check PATH before tests
+      #   shell: bash
+      #   run: |
+      #     echo "=== Current PATH ==="
+      #     echo "$PATH" | tr ':' '\n' | grep -i "qugar\|lapack\|deps" || echo "No project paths found in PATH"
+      #
+      #     echo "=== Full PATH breakdown ==="
+      #     echo "$PATH" | tr ':' '\n' | nl -v1
 
       - name: Configure, build and install C++ library
         shell: bash
