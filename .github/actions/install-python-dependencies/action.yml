@@ -40,3 +40,8 @@ runs:
         environment-file: environment-dev.yml
         auto-activate-base: false
         # use-only-tar-bz2: true # This is needed for caching to work properly, but clashes with fenicsx packages
+
+    - name: Install Build Requrements
+      shell: bash -el {0}
+      run: |
+        python -m pip install build wheel

@@ -27,9 +27,9 @@ runs:
         clone="${{ runner.temp }}/${{ inputs.dependency_name }}"
         build="$clone/build"
         echo "Setting up variables for ${{ inputs.dependency_name }}"
-        echo "$prefix"
-        echo "$clone"
-        echo "$build"
+        echo "INSTALL PREFIX: $prefix"
+        echo "CLONE DIRECTORY: $clone"
+        echo "BUILD DIRECTORY: $build"
         {
           echo "prefix=$prefix"
           echo "clone=$clone"
