@@ -35,9 +35,13 @@ jobs:
       - name: Configure, build and install C++ library
         shell: bash
         run: |
+          echo "CONDA_PREFIX=$CONDA_PREFIX"
+          ls $CONDA_PREFIX/include/lapacke.h
+          ls $CONDA_PREFIX/lib/libopenblas*
           cmake -S cpp -B build \
                 -G Ninja \
                 -DBUILD_TESTING=ON \
+                -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
                 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
           cmake --build build --parallel
           cmake --install build
