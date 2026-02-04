@@ -35,7 +35,7 @@ jobs:
       - name: Configure, build and install C++ library
         shell: bash
         run: |
-          echo "CONDA_PREFIX=$CONDA_PREFIX"
+          CONDA_PREFIX=$(conda info --base)/envs/build-env
           ls $CONDA_PREFIX/include/lapacke.h
           ls $CONDA_PREFIX/lib/libopenblas*
           cmake -S cpp -B build \
