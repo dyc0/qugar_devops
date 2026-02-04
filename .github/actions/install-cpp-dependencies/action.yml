@@ -5,62 +5,32 @@ inputs:
     description: "Operating system"
     required: true
     type: string
-  deps_prefix:
-    description: "Install prefix for built deps (cached)"
-    required: false
-    default: "${{ github.workspace }}/.deps"
-
 runs:
   using: "composite"
+  defaults:
+    run:
+      shell: bash -el {0}
   steps:
     - name: Show runner info
-      shell: bash
       run: |
         echo "Running on OS: ${{ runner.os }}"
         echo "Runner name: ${{ runner.name }}"
-
-    - name: Install CMake and ninja, Linux
-      if: runner.os == 'Linux'
-      uses: lukka/get-cmake@latest
-      # Default caching options are suitable for GH hosted runners
-
-    - name: Linux Dependencies
-      if: runner.os == 'Linux'
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y g++ gfortran
-
-    - name: macOS Dependencies
-      if: runner.os == 'macOS'
-      shell: bash
-      run: |
-        brew update
-        brew install gcc
-
-    - name: Windows dependencies (chocolatey)
-      if: runner.os == 'Windows'
-      shell: bash
-      run: |
-        choco install ninja --no-progress -y
-        choco install cmake --no-progress -y --installargs "ADD_CMAKE_TO_PATH=System"
-        echo "C:\mingw64\bin" >> $env:GITHUB_PATH
-
-      # Dependencies are cloned via HTTPs to avoid SSH key issues on GitHub runners
-      # Alternatively, we could provide an AUTH token secret to the action
-      # They are then built and installed, with caching based on OS and architecture
-    - name: Install Catch2
-      uses: ./.github/actions/clone-cache-install
+    
+    - name: Setup Miniconda
+      uses: conda-incubator/setup-miniconda@v3
       with:
-        dependency_name: "catch2"
-        dependency_repo: "https://github.com/catchorg/Catch2.git"
-        cmake_options: "-DBUILD_TESTING=OFF"
-
-    - name: Install LAPACK
-      if: runner.os != 'MacOS'  # LAPACK is bundled with accelerate on macOS
-      uses: ./.github/actions/clone-cache-install
-      with:
-        dependency_name: "lapack"
-        dependency_repo: "https://github.com/Reference-LAPACK/lapack.git"
-        cmake_options: "-DBUILD_SHARED_LIBS=ON -DLAPACKE=ON"
-
+        auto-update-conda: true
+        activate-environment: build-env
+        channels: conda-forge
+        channel-priority: strict
+    
+    - name: Install dependencies via conda
+      run: |
+        conda install -y cmake ninja openblas catch2
+        
+    - name: Verify installations
+      run: |
+        cmake --version
+        ninja --version
+        ls $CONDA_PREFIX/include/lapacke.h
+        ls $CONDA_PREFIX/lib/cmake/Catch2
