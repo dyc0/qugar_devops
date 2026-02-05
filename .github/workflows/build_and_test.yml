@@ -24,7 +24,7 @@ jobs:
           os: ${{ inputs.os }}
 
       # - name: Check PATH before tests
-      #   shell:bash -el {0}
+      #   shell: bash -el {0}
       #   run: |
       #     echo "=== Current PATH ==="
       #     echo "$PATH" | tr ':' '\n' | grep -i "qugar\|lapack\|deps" || echo "No project paths found in PATH"
@@ -47,14 +47,14 @@ jobs:
           cmake --install build
 
       - name: Package C++ library
-        shell:bash -el {0}
+        shell: bash -el {0}
         run: |
           tar -C "${{ github.workspace }}/install" -caf \
             qugar-${{ runner.os }}-${{ runner.arch }}.tar.zst .
 
       # TODO: C++ tests are temporarily disabled because they are failing
       - name: Run C++ tests
-        shell:bash -el {0}
+        shell: bash -el {0}
         run: |
           ctest --test-dir build --output-on-failure
 
