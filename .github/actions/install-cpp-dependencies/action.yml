@@ -32,5 +32,15 @@ runs:
       run: |
         cmake --version
         ninja --version
-        ls $CONDA_PREFIX/include/lapacke.h
-        ls $CONDA_PREFIX/lib/cmake/Catch2
+        if [ -f "$CONDA_PREFIX/include/lapacke.h" ]; then
+          echo "lapacke.h found"
+        else
+          echo "lapacke.h not found"
+          exit 1
+        fi
+        if [ -d "$CONDA_PREFIX/lib/cmake/Catch2" ]; then
+          echo "Catch2 found"
+        else
+          echo "Catch2 not found"
+          exit 1
+        fi
