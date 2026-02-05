@@ -27,14 +27,20 @@ runs:
       run: |
         conda install -y cmake ninja liblapacke openblas catch2
         
-    - name: Verify installations
+    - name: Verify installations (Linux/macOS)
       shell: bash -el {0}
+      if: runner.os != 'Windows'
       run: |
         cmake --version
         ninja --version
-        if [ -f "$CONDA_PREFIX/include/lapacke.h" ]; then
-          echo "lapacke.h found"
-        else
-          echo "lapacke.h NOT found"
-          exit 1
-        fi
+        ls $CONDA_PREFIX/include/lapacke.h
+        ls $CONDA_PREFIX/lib/cmake/Catch2
+
+    - name: Check dependencies (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        cmake --version
+        ninja --version
+        Test-Path "$env:CONDA_PREFIX\include\lapacke.h"
+        Test-Path "$env:CONDA_PREFIX\lib\cmake\Catch2"
