@@ -18,7 +18,7 @@ runs:
       uses: conda-incubator/setup-miniconda@v3
       with:
         auto-update-conda: true
-        activate-environment: build-env
+        activate-environment: QUGaR
         channels: conda-forge
         channel-priority: strict
     
