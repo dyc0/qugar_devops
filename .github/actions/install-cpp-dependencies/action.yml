@@ -32,6 +32,7 @@ runs:
       run: |
         cmake --version
         ninja --version
+        echo "CONDA_PREFIX: $CONDA_PREFIX"
         if [ -f "$CONDA_PREFIX/include/lapacke.h" ]; then
           echo "lapacke.h found"
         else
