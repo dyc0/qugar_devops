@@ -25,7 +25,7 @@ runs:
     - name: Install dependencies via conda
       shell: bash -el {0}
       run: |
-        conda install -y cmake ninja openblas catch2
+        conda install -y cmake ninja liblapacke openblas catch2
         
     - name: Verify installations
       shell: bash -el {0}
