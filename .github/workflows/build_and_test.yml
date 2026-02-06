@@ -39,18 +39,23 @@ jobs:
 
       - name: Configure, build and install C++ library (Windows)
         if: runner.os == 'Windows'
-        shell: cmd
         run: |
-          call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-          cmake -S cpp -B build ^
-                -G "Visual Studio 17 2022" ^
-                -A x64 ^
-                -DBUILD_TESTING=ON ^
-                -DCMAKE_PREFIX_PATH="%CONDA_PREFIX%;%CONDA_PREFIX%\Library" ^
-                -DCMAKE_INCLUDE_PATH="%CONDA_PREFIX%\Library\include\openblas" ^
-                -DCMAKE_INSTALL_PREFIX="%GITHUB_WORKSPACE%\install"
-          cmake --build build --config Release --parallel
-          cmake --install build --config Release
+          UNIX_PREFIX=$(cygpath "$CONDA_PREFIX" 2>/dev/null || echo "$CONDA_PREFIX")
+
+          which clang
+          which clang++
+          clang --version
+
+          cmake -S cpp -B build \
+                -G Ninja \
+                -DCMAKE_C_COMPILER=clang \
+                -DCMAKE_CXX_COMPILER=clang++ \
+                -DBUILD_TESTING=ON \
+                -DCMAKE_PREFIX_PATH="$UNIX_PREFIX;$UNIX_PREFIX/Library" \
+                -DCMAKE_INCLUDE_PATH="$UNIX_PREFIX/Library/include/openblas" \
+                -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
+          cmake --build build --parallel
+          cmake --install build
 
       - name: Package C++ library
         run: |
