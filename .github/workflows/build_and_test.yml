@@ -26,12 +26,26 @@ jobs:
         with:
           os: ${{ inputs.os }}
 
-      - name: Configure, build and install C++ library
+      - name: Configure, build and install C++ library (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           cmake -S cpp -B build \
                 -G Ninja \
                 -DBUILD_TESTING=ON \
                 -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+                -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
+          cmake --build build --parallel
+          cmake --install build
+
+      - name: Configure, build and install C++ library (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          UNIX_PREFIX=$(cygpath "$CONDA_PREFIX" 2>/dev/null || echo "$CONDA_PREFIX")
+          cmake -S cpp -B build \
+                -G Ninja \
+                -DBUILD_TESTING=ON \
+                -DCMAKE_PREFIX_PATH="$UNIX_PREFIX;$UNIX_PREFIX/Library" \
+                -DCMAKE_INCLUDE_PATH="$UNIX_PREFIX/Library/include/openblas" \
                 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
           cmake --build build --parallel
           cmake --install build
