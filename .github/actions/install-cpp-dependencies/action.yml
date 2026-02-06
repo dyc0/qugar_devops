@@ -27,20 +27,31 @@ runs:
       run: |
         conda install -y cmake ninja liblapacke openblas catch2
         
-    - name: Verify installations
+    - name: Verify installations (Linux/macOS)
+      if: ${{ runner.os }} != 'Windows'
       shell: bash -el {0}
       run: |
         cmake --version
         ninja --version
-        echo "CONDA_PREFIX: $CONDA_PREFIX"
-        echo "CONDA_PREFIX: $CONDA_PREFIX"
-    
-        # Convert Windows path to Unix path for bash tools
+        ls $CONDA_PREFIX/include/lapacke.h 
+        ls $CONDA_PREFIX/lib/cmake/Catch2 
+
+    - name: Verify installations (Windows)
+      if: ${{ runner.os }} == 'Windows'
+      shell: bash -el {0}
+      run: |
+        cmake --version
+        ninja --version
         UNIX_PREFIX=$(cygpath "$CONDA_PREFIX" 2>/dev/null || echo "$CONDA_PREFIX")
-        echo "UNIX_PREFIX: $UNIX_PREFIX"
-        
-        echo "Listing Library directory:"
-        ls "$UNIX_PREFIX"/Library/include/ 2>/dev/null || echo "Library/include not found"
-        
-        echo "Searching for lapacke:"
-        find "$UNIX_PREFIX" -name "*lapacke*" 2>/dev/null || echo "No lapacke files found"
+        if [ -f "$UNIX_PREFIX/Library/include/openblas/lapacke.h" ] || [ -f "$UNIX_PREFIX/include/lapacke.h" ]; then
+          echo "lapacke.h found"
+        else
+          echo "lapacke.h not found"
+          exit 1
+        fi
+        if [ -d "$UNIX_PREFIX/Library/include/catch2" ] || [ -d "$UNIX_PREFIX/lib/cmake/Catch2" ]; then
+          echo "Catch2 found"
+        else
+          echo "Catch2 not found"
+          exit 1
+        fi
