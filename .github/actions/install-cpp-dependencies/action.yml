@@ -26,6 +26,12 @@ runs:
       shell: bash -el {0}
       run: |
         conda install -y cmake ninja liblapacke openblas catch2
+
+    - name: Install MinGW-w64 (Windows only)
+      if: runner.os == 'Windows'
+      shell: bash -el {0}
+      run: |
+        conda install m2w64-toolchain
         
     - name: Verify installations (Linux/macOS)
       if: runner.os != 'Windows'
