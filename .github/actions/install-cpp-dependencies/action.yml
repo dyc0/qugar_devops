@@ -28,7 +28,7 @@ runs:
         conda install -y cmake ninja liblapacke openblas catch2
         
     - name: Verify installations (Linux/macOS)
-      if: ${{ runner.os }} != 'Windows'
+      if: runner.os != 'Windows'
       shell: bash -el {0}
       run: |
         cmake --version
@@ -37,7 +37,7 @@ runs:
         ls $CONDA_PREFIX/lib/cmake/Catch2 
 
     - name: Verify installations (Windows)
-      if: ${{ runner.os }} == 'Windows'
+      if: runner.os == 'Windows'
       shell: bash -el {0}
       run: |
         cmake --version
