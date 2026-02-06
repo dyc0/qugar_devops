@@ -31,7 +31,7 @@ runs:
       if: runner.os == 'Windows'
       shell: bash -el {0}
       run: |
-        conda install m2w64-toolchain
+        conda install cxx-compiler c-compiler
         
     - name: Verify installations (Linux/macOS)
       if: runner.os != 'Windows'
