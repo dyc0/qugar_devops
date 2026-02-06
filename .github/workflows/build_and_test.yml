@@ -50,6 +50,8 @@ jobs:
                 -G Ninja \
                 -DCMAKE_C_COMPILER=clang \
                 -DCMAKE_CXX_COMPILER=clang++ \
+                -DCMAKE_DISABLE_FIND_PACKAGE_clang-tidy=TRUE \ # Some checks need
+                -DCMAKE_DISABLE_FIND_PACKAGE_cppcheck=TRUE \   # to be disabled on Windows
                 -DBUILD_TESTING=ON \
                 -DCMAKE_PREFIX_PATH="$UNIX_PREFIX;$UNIX_PREFIX/Library" \
                 -DCMAKE_INCLUDE_PATH="$UNIX_PREFIX/Library/include/openblas" \
