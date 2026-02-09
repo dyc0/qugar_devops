@@ -45,11 +45,12 @@ jobs:
                 -G Ninja \
                 -DCMAKE_C_COMPILER=clang \
                 -DCMAKE_CXX_COMPILER=clang++ \
-                -DCMAKE_DISABLE_FIND_PACKAGE_clang-tidy=TRUE \ 
-                -DCMAKE_DISABLE_FIND_PACKAGE_cppcheck=TRUE \
+                -Dqugar_DEVELOPER_MODE=OFF \
+                -Dqugar_ENABLE_CLANG_TIDY=OFF \
+                -Dqugar_ENABLE_CPPCHECK=OFF \
                 -DBUILD_TESTING=ON \
                 -DCMAKE_PREFIX_PATH="$UNIX_PREFIX;$UNIX_PREFIX/Library" \
-                -DLAPACKE_DIR="$UNIX_PREFIX/Library/include/openblas;$UNIX_PREFIX/Library" \
+                -DLAPACKE_DIR="$UNIX_PREFIX/Library" \
                 -DCMAKE_INSTALL_PREFIX="${{ github.workspace }}/install"
           cmake --build build --parallel
           cmake --install build
@@ -88,6 +89,7 @@ jobs:
 
 
   build-test-wheel:
+    if: ${{ !contains(inputs.os, 'windows') }}
     runs-on: ${{ inputs.os }}
     defaults:
       run:

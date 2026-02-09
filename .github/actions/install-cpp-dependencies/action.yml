@@ -27,7 +27,7 @@ runs:
       run: |
         conda install -y cmake ninja liblapacke openblas catch2
 
-    - name: Install MinGW-w64 (Windows only)
+    - name: Install compilers (Windows only)
       if: runner.os == 'Windows'
       shell: bash -el {0}
       run: |
@@ -55,7 +55,7 @@ runs:
           echo "lapacke.h not found"
           exit 1
         fi
-        if [ -d "$UNIX_PREFIX/Library/include/catch2" ] || [ -d "$UNIX_PREFIX/lib/cmake/Catch2" ]; then
+        if [ -d "$UNIX_PREFIX/Library/include/catch2" ] || [ -d "$UNIX_PREFIX/Library/lib/cmake/Catch2" ] || [ -d "$UNIX_PREFIX/lib/cmake/Catch2" ]; then
           echo "Catch2 found"
         else
           echo "Catch2 not found"
