@@ -1,26 +1,32 @@
 macro(qugar_find_lapacke)
   set(LAPACKE_VERSION 3.9)
-  
+
+  # On Windows, conda-forge installs under $CONDA_PREFIX/Library/
+  set(_LAPACKE_SEARCH_PATHS ${LAPACKE_DIR} $ENV{CONDA_PREFIX})
+  if(WIN32 AND DEFINED ENV{CONDA_PREFIX})
+    list(APPEND _LAPACKE_SEARCH_PATHS "$ENV{CONDA_PREFIX}/Library")
+  endif()
+
   # Find LAPACKE header
   find_path(LAPACKE_INCLUDE_DIR
     NAMES lapacke.h
-    PATHS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
-    PATH_SUFFIXES include
+    PATHS ${_LAPACKE_SEARCH_PATHS}
+    PATH_SUFFIXES include include/openblas
     NO_DEFAULT_PATH
   )
-  
+
   # Find LAPACKE library
   find_library(LAPACKE_LIBRARY
     NAMES lapacke
-    PATHS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+    PATHS ${_LAPACKE_SEARCH_PATHS}
     PATH_SUFFIXES lib lib64
     NO_DEFAULT_PATH
   )
-  
+
   # Also find LAPACK library (LAPACKE depends on it)
   find_library(LAPACK_LIBRARY
     NAMES lapack
-    PATHS ${LAPACKE_DIR} $ENV{CONDA_PREFIX}
+    PATHS ${_LAPACKE_SEARCH_PATHS}
     PATH_SUFFIXES lib lib64
     NO_DEFAULT_PATH
   )
